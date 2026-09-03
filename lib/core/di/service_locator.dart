@@ -9,6 +9,7 @@ import 'package:lactarehub/data/repositories/testimonial_repository_impl.dart';
 import 'package:lactarehub/domain/usecases/auth/get_test_credentials.dart';
 import 'package:lactarehub/domain/usecases/auth/register_donor.dart';
 import 'package:lactarehub/domain/usecases/auth/sign_in.dart';
+import 'package:lactarehub/domain/usecases/auth/sign_out.dart';
 import 'package:lactarehub/domain/usecases/content/list_articles.dart';
 import 'package:lactarehub/domain/usecases/content/list_featured_articles.dart';
 import 'package:lactarehub/domain/usecases/donation/get_current_donation.dart';
@@ -21,6 +22,7 @@ import 'package:lactarehub/domain/usecases/points/list_collection_points.dart';
 import 'package:lactarehub/domain/usecases/schedule/confirm_collection.dart';
 import 'package:lactarehub/domain/usecases/schedule/get_available_windows.dart';
 import 'package:lactarehub/domain/usecases/schedule/get_next_collection.dart';
+import 'package:lactarehub/domain/usecases/schedule/get_reference_date.dart';
 import 'package:lactarehub/domain/usecases/schedule/schedule_collection.dart';
 import 'package:lactarehub/domain/usecases/testimonials/list_testimonials.dart';
 import 'package:lactarehub/domain/usecases/testimonials/submit_testimonial.dart';
@@ -33,6 +35,7 @@ import 'package:lactarehub/domain/usecases/testimonials/submit_testimonial.dart'
 abstract class ServiceLocator {
   static late final SignIn signIn;
   static late final RegisterDonor registerDonor;
+  static late final SignOut signOut;
   static late final GetTestCredentials getTestCredentials;
 
   static late final GetDonorProfile getDonorProfile;
@@ -45,6 +48,7 @@ abstract class ServiceLocator {
   static late final ConfirmCollection confirmCollection;
   static late final ScheduleCollection scheduleCollection;
   static late final GetAvailableWindows getAvailableWindows;
+  static late final GetReferenceDate getReferenceDate;
 
   static late final ListCollectionPoints listCollectionPoints;
 
@@ -75,6 +79,7 @@ abstract class ServiceLocator {
 
     signIn = SignIn(authRepository);
     registerDonor = RegisterDonor(authRepository);
+    signOut = SignOut(authRepository);
     getTestCredentials = GetTestCredentials(authRepository);
 
     getDonorProfile = GetDonorProfile(donorRepository);
@@ -87,6 +92,7 @@ abstract class ServiceLocator {
     confirmCollection = ConfirmCollection(scheduleRepository);
     scheduleCollection = ScheduleCollection(scheduleRepository);
     getAvailableWindows = GetAvailableWindows(scheduleRepository);
+    getReferenceDate = GetReferenceDate(scheduleRepository);
 
     listCollectionPoints = ListCollectionPoints(pointRepository);
 

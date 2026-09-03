@@ -11,6 +11,10 @@ class ScheduleController extends ChangeNotifier {
   List<CollectionPoint> _points = const [];
   List<String> _availableWindows = const [];
 
+  /// "Hoje" do protótipo. Vem do caso de uso, e não da coleta atual, porque
+  /// quem acabou de se cadastrar ainda não tem coleta marcada.
+  DateTime _referenceToday = DateTime.now();
+
   CollectionMode _mode = CollectionMode.domiciliar;
   DateTime? _date;
   String? _timeWindow;
@@ -40,13 +44,14 @@ class ScheduleController extends ChangeNotifier {
       (!requiresPoint || _selectedPoint != null);
 
   /// Datas oferecidas: os próximos catorze dias a partir da referência.
-  List<DateTime> get selectableDates {
-    final reference = _current?.referenceToday ?? DateTime.now();
-    return [
-      for (var offset = 1; offset <= 14; offset++)
-        DateTime(reference.year, reference.month, reference.day + offset),
-    ];
-  }
+  List<DateTime> get selectableDates => [
+    for (var offset = 1; offset <= 14; offset++)
+      DateTime(
+        _referenceToday.year,
+        _referenceToday.month,
+        _referenceToday.day + offset,
+      ),
+  ];
 
   Future<void> load() async {
     _isLoading = true;
@@ -56,6 +61,7 @@ class ScheduleController extends ChangeNotifier {
     _donor = await ServiceLocator.getDonorProfile();
     _points = await ServiceLocator.listCollectionPoints();
     _availableWindows = ServiceLocator.getAvailableWindows();
+    _referenceToday = ServiceLocator.getReferenceDate();
     _mode = _current?.mode ?? CollectionMode.domiciliar;
 
     _isLoading = false;
@@ -89,10 +95,7 @@ class ScheduleController extends ChangeNotifier {
   Future<CollectionSchedule?> submit() async {
     final date = _date;
     final window = _timeWindow;
-    final reference = _current?.referenceToday;
-    if (!canSubmit || date == null || window == null || reference == null) {
-      return null;
-    }
+    if (!canSubmit || date == null || window == null) return null;
 
     _isSubmitting = true;
     notifyListeners();
@@ -110,7 +113,7 @@ class ScheduleController extends ChangeNotifier {
         mode: _mode,
         place: place,
         isConfirmed: true,
-        referenceToday: reference,
+        referenceToday: _referenceToday,
         notes: _notes,
       ),
     );

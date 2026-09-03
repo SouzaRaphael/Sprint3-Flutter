@@ -15,39 +15,52 @@ class DonorHomeController extends ChangeNotifier {
   bool _isConfirming = false;
 
   Donor? get donor => _donor;
-  CollectionSchedule? get schedule => _schedule;
-  Donation? get currentDonation => _currentDonation;
   List<Article> get featuredArticles => _featuredArticles;
   bool get isLoading => _isLoading;
   bool get isConfirming => _isConfirming;
 
+  /// Nula quando não há coleta marcada.
+  CollectionSchedule? get schedule => _schedule;
+
+  /// Nula enquanto a pessoa não tiver nenhuma doação em trânsito.
+  Donation? get currentDonation => _currentDonation;
+
+  /// Primeira carga: mostra o indicador enquanto busca.
   Future<void> load() async {
     _isLoading = true;
     notifyListeners();
-
-    _donor = await ServiceLocator.getDonorProfile();
-    _schedule = await ServiceLocator.getNextCollection();
-    _currentDonation = await ServiceLocator.getCurrentDonation();
-    _featuredArticles = await ServiceLocator.listFeaturedArticles();
-
+    await _fetch();
     _isLoading = false;
     notifyListeners();
   }
 
+  /// Revalidação silenciosa, usada quando a aba volta a ficar visível.
+  ///
+  /// Mantém o conteúdo atual na tela em vez de piscar um indicador a cada
+  /// troca de aba — e é o que faz uma coleta agendada em outra aba aparecer
+  /// aqui imediatamente.
+  Future<void> refresh() async {
+    await _fetch();
+    notifyListeners();
+  }
+
+  Future<void> _fetch() async {
+    _donor = await ServiceLocator.getDonorProfile();
+    _schedule = await ServiceLocator.getNextCollection();
+    _currentDonation = await ServiceLocator.getCurrentDonation();
+    _featuredArticles = await ServiceLocator.listFeaturedArticles();
+  }
+
   /// Confirma a coleta agendada e devolve o estado atualizado.
   Future<void> confirmCollection() async {
+    if (_schedule == null) return;
+
     _isConfirming = true;
     notifyListeners();
 
     _schedule = await ServiceLocator.confirmCollection();
 
     _isConfirming = false;
-    notifyListeners();
-  }
-
-  /// Reexibe os dados da agenda depois de um agendamento em outra aba.
-  Future<void> refreshSchedule() async {
-    _schedule = await ServiceLocator.getNextCollection();
     notifyListeners();
   }
 }

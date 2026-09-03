@@ -17,4 +17,5 @@ abstract class AppRoutes {
   static const String articleDetail = '/conteudo/artigo';
   static const String collectionPointDetail = '/pontos/detalhe';
   static const String donationDetail = '/doacoes/detalhe';
+  static const String profile = '/perfil';
 }

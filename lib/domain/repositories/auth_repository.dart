@@ -9,6 +9,9 @@ abstract class AuthRepository {
 
   Future<UserSession> register(RegistrationDraft draft);
 
+  /// Encerra a sessão e devolve o aplicativo ao estado de demonstração.
+  Future<void> signOut();
+
   /// Contas de demonstração mostradas na tela de login.
   List<TestCredential> listTestCredentials();
 }

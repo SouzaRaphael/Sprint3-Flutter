@@ -6,5 +6,5 @@ class ConfirmCollection {
   final ScheduleRepository _repository;
   const ConfirmCollection(this._repository);
 
-  Future<CollectionSchedule> call() => _repository.confirm();
+  Future<CollectionSchedule?> call() => _repository.confirm();
 }

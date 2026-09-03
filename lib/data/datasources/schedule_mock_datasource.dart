@@ -1,14 +1,16 @@
 import 'package:lactarehub/domain/entities/collection_schedule.dart';
 
-/// Agenda de coletas em memória.
+/// Agenda de coletas de exemplo.
 ///
-/// Confirmar ou reagendar altera este estado durante a sessão, o que dá
-/// retorno visual real às ações sem depender de backend.
+/// É catálogo: a coleta de fato marcada vive no `SessionMockDatasource`, que
+/// a substitui ou zera conforme a pessoa tenha entrado pelo login ou pelo
+/// cadastro.
 abstract class ScheduleMockDatasource {
   /// Data de referência do protótipo — mantém as telas coerentes entre si.
   static final DateTime today = DateTime(2026, 5, 4);
 
-  static CollectionSchedule next = CollectionSchedule(
+  /// Coleta já agendada da persona de demonstração.
+  static final CollectionSchedule demoNext = CollectionSchedule(
     id: 'agd-0508',
     scheduledAt: DateTime(2026, 5, 8, 10),
     timeWindow: '10h às 12h',

@@ -13,6 +13,7 @@ import 'package:lactarehub/presentation/screens/donor_home/components/quick_acti
 import 'package:lactarehub/presentation/shared/components/app_feedback.dart';
 import 'package:lactarehub/presentation/shared/components/article_cards.dart';
 import 'package:lactarehub/presentation/shared/components/avatar_circle.dart';
+import 'package:lactarehub/presentation/shared/components/empty_state_card.dart';
 import 'package:lactarehub/presentation/shared/components/section_title.dart';
 
 /// Tela 07 do protótipo — home da doadora autenticada.
@@ -26,6 +27,7 @@ class DonorHomeScreen extends StatefulWidget {
     required this.onOpenMyArea,
     required this.onOpenArticle,
     required this.onOpenDonation,
+    required this.isActive,
   });
 
   final VoidCallback onOpenSchedule;
@@ -35,6 +37,9 @@ class DonorHomeScreen extends StatefulWidget {
   final VoidCallback onOpenMyArea;
   final ValueChanged<Article> onOpenArticle;
   final ValueChanged<Donation> onOpenDonation;
+
+  /// `true` quando esta é a aba visível da casca.
+  final bool isActive;
 
   @override
   State<DonorHomeScreen> createState() => _DonorHomeScreenState();
@@ -47,6 +52,16 @@ class _DonorHomeScreenState extends State<DonorHomeScreen> {
   void initState() {
     super.initState();
     _controller.load();
+  }
+
+
+  @override
+  void didUpdateWidget(covariant DonorHomeScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // As abas vivem num IndexedStack e nunca são descartadas, então esta é a
+    // deixa para revalidar: uma coleta agendada ou confirmada em outra aba
+    // precisa aparecer aqui assim que esta voltar a ficar visível.
+    if (widget.isActive && !oldWidget.isActive) _controller.refresh();
   }
 
   @override
@@ -77,10 +92,7 @@ class _DonorHomeScreenState extends State<DonorHomeScreen> {
             final schedule = _controller.schedule;
             final donation = _controller.currentDonation;
 
-            if (_controller.isLoading ||
-                donor == null ||
-                schedule == null ||
-                donation == null) {
+            if (_controller.isLoading || donor == null) {
               return const Center(child: CircularProgressIndicator());
             }
 
@@ -96,38 +108,58 @@ class _DonorHomeScreenState extends State<DonorHomeScreen> {
                 children: [
                   _Greeting(name: donor.firstName, gradientIndex: donor.avatarGradientIndex),
                   const SizedBox(height: AppSpacing.xl),
-                  Text.rich(
-                    TextSpan(
+                  if (schedule == null)
+                    Text(
+                      'Vamos marcar a sua primeira coleta.',
                       style: AppTextStyles.heroTitle.copyWith(fontSize: 23),
-                      children: [
-                        const TextSpan(text: 'Sua próxima coleta é '),
-                        TextSpan(
-                          text: Formatters.daysUntil(
-                            schedule.scheduledAt,
-                            schedule.referenceToday,
+                    )
+                  else
+                    Text.rich(
+                      TextSpan(
+                        style: AppTextStyles.heroTitle.copyWith(fontSize: 23),
+                        children: [
+                          const TextSpan(text: 'Sua próxima coleta é '),
+                          TextSpan(
+                            text: Formatters.daysUntil(
+                              schedule.scheduledAt,
+                              schedule.referenceToday,
+                            ),
+                            style: AppTextStyles.heroTitle.copyWith(
+                              fontSize: 23,
+                              color: AppColors.accent,
+                            ),
                           ),
-                          style: AppTextStyles.heroTitle.copyWith(
-                            fontSize: 23,
-                            color: AppColors.accent,
-                          ),
-                        ),
-                        const TextSpan(text: '.'),
-                      ],
+                          const TextSpan(text: '.'),
+                        ],
+                      ),
                     ),
-                  ),
                   const SizedBox(height: AppSpacing.sm),
                   Text(
-                    'Em nome de muitas famílias, agradecemos a sua '
-                    'generosidade.',
+                    schedule == null
+                        ? 'Bem-vinda à rede! O próximo passo é combinar como '
+                              'o seu leite chega até um banco de leite.'
+                        : 'Em nome de muitas famílias, agradecemos a sua '
+                              'generosidade.',
                     style: AppTextStyles.body,
                   ),
                   const SizedBox(height: AppSpacing.xl),
-                  NextCollectionCard(
-                    schedule: schedule,
-                    isConfirming: _controller.isConfirming,
-                    onConfirm: _confirm,
-                    onReschedule: widget.onOpenSchedule,
-                  ),
+                  if (schedule == null)
+                    EmptyStateCard(
+                      icon: Icons.event_available_outlined,
+                      title: 'Nenhuma coleta agendada',
+                      message: 'Escolha a modalidade, o dia e o horário que '
+                          'couberem na sua rotina.',
+                      actionLabel: 'Agendar coleta',
+                      onAction: widget.onOpenSchedule,
+                      onDarkBackground: true,
+                    )
+                  else
+                    NextCollectionCard(
+                      schedule: schedule,
+                      isConfirming: _controller.isConfirming,
+                      onConfirm: _confirm,
+                      onReschedule: widget.onOpenSchedule,
+                    ),
                   const SizedBox(height: AppSpacing.xl),
                   QuickActionsRow(
                     actions: [
@@ -168,15 +200,24 @@ class _DonorHomeScreenState extends State<DonorHomeScreen> {
                   const SizedBox(height: AppSpacing.xxl),
                   const SectionTitle(title: 'Acompanhe sua doação'),
                   const SizedBox(height: AppSpacing.lg),
-                  DonationPreviewCard(
-                    donation: donation,
-                    onTap: widget.onOpenDonation,
-                  ),
-                  const SizedBox(height: AppSpacing.lg),
-                  TeamMessageCard(
-                    donorFirstName: donor.firstName,
-                    hospital: donation.destinationHospital,
-                  ),
+                  if (donation == null)
+                    const EmptyStateCard(
+                      icon: Icons.route_outlined,
+                      title: 'Seu rastreamento aparece aqui',
+                      message: 'Depois da primeira coleta você acompanha cada '
+                          'etapa, do frasco recolhido até a UTI neonatal.',
+                    )
+                  else ...[
+                    DonationPreviewCard(
+                      donation: donation,
+                      onTap: widget.onOpenDonation,
+                    ),
+                    const SizedBox(height: AppSpacing.lg),
+                    TeamMessageCard(
+                      donorFirstName: donor.firstName,
+                      hospital: donation.destinationHospital,
+                    ),
+                  ],
                   const SizedBox(height: AppSpacing.xxl),
                   const SectionTitle(title: 'Para ler nesta semana'),
                   const SizedBox(height: AppSpacing.lg),

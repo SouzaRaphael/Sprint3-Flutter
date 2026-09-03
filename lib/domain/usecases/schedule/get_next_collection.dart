@@ -6,5 +6,5 @@ class GetNextCollection {
   final ScheduleRepository _repository;
   const GetNextCollection(this._repository);
 
-  Future<CollectionSchedule> call() => _repository.getNextCollection();
+  Future<CollectionSchedule?> call() => _repository.getNextCollection();
 }

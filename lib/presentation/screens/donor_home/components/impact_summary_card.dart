@@ -20,6 +20,15 @@ class ImpactSummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Quem ainda não doou não tem sequência a exibir: a faixa vira convite.
+    final starting = donor.isStartingJourney;
+    final streakTitle = starting
+        ? 'Sua jornada começa agora'
+        : '${donor.streakWeeks} semanas seguidas doando';
+    final streakSubtitle = starting
+        ? 'A primeira doação libera a primeira medalha.'
+        : 'Falta ${donor.donationsToNextBadge} doação para a próxima medalha.';
+
     return Container(
       decoration: BoxDecoration(
         color: AppColors.surface,
@@ -79,14 +88,16 @@ class ImpactSummaryCard extends StatelessWidget {
                     width: 40,
                     height: 40,
                     alignment: Alignment.center,
-                    decoration: const BoxDecoration(
-                      color: AppColors.pinkBg,
+                    decoration: BoxDecoration(
+                      color: starting ? AppColors.tintBlue : AppColors.pinkBg,
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(
-                      Icons.local_fire_department_outlined,
+                    child: Icon(
+                      starting
+                          ? Icons.rocket_launch_outlined
+                          : Icons.local_fire_department_outlined,
                       size: 20,
-                      color: AppColors.pinkFg,
+                      color: starting ? AppColors.primary : AppColors.pinkFg,
                     ),
                   ),
                   const SizedBox(width: AppSpacing.md),
@@ -94,16 +105,9 @@ class ImpactSummaryCard extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          '${donor.streakWeeks} semanas seguidas doando',
-                          style: AppTextStyles.label,
-                        ),
+                        Text(streakTitle, style: AppTextStyles.label),
                         const SizedBox(height: 3),
-                        Text(
-                          'Falta ${donor.donationsToNextBadge} doação para a '
-                          'próxima medalha.',
-                          style: AppTextStyles.caption,
-                        ),
+                        Text(streakSubtitle, style: AppTextStyles.caption),
                       ],
                     ),
                   ),

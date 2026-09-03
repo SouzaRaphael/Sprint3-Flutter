@@ -1,9 +1,12 @@
 import 'package:lactarehub/domain/entities/donation.dart';
 import 'package:lactarehub/domain/entities/tracking_step.dart';
 
-/// Histórico de doações da Giovana, com as linhas do tempo de rastreio.
+/// Histórico de doações da persona de demonstração, com as linhas do tempo
+/// de rastreio.
+///
+/// É catálogo: as doações da sessão atual vêm do `SessionMockDatasource`.
 abstract class DonationMockDatasource {
-  static final List<Donation> items = [
+  static final List<Donation> demoItems = [
     Donation(
       code: 'LCT-2104',
       collectedAt: DateTime(2026, 4, 27),

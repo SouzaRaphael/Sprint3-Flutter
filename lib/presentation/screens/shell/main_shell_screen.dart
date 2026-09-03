@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lactarehub/domain/entities/article.dart';
 import 'package:lactarehub/domain/entities/collection_point.dart';
 import 'package:lactarehub/domain/entities/donation.dart';
+import 'package:lactarehub/domain/entities/donor.dart';
 import 'package:lactarehub/presentation/screens/content/content_screen.dart';
 import 'package:lactarehub/presentation/screens/donor_home/donor_home_screen.dart';
 import 'package:lactarehub/presentation/screens/my_area/my_area_screen.dart';
@@ -22,6 +23,7 @@ class MainShellScreen extends StatefulWidget {
     required this.onOpenArticle,
     required this.onOpenCollectionPoint,
     required this.onOpenDonation,
+    required this.onOpenProfile,
   });
 
   final ShellTab initialTab;
@@ -29,6 +31,7 @@ class MainShellScreen extends StatefulWidget {
   final ValueChanged<Article> onOpenArticle;
   final ValueChanged<CollectionPoint> onOpenCollectionPoint;
   final ValueChanged<Donation> onOpenDonation;
+  final Future<bool?> Function(Donor) onOpenProfile;
 
   @override
   State<MainShellScreen> createState() => _MainShellScreenState();
@@ -54,6 +57,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
         index: _currentTab.index,
         children: [
           DonorHomeScreen(
+            isActive: _currentTab == ShellTab.inicio,
             onOpenSchedule: () => _goToTab(ShellTab.doar),
             onOpenPoints: () => _goToTab(ShellTab.pontos),
             onOpenContent: () => _goToTab(ShellTab.conteudo),
@@ -66,6 +70,8 @@ class _MainShellScreenState extends State<MainShellScreen> {
           CollectionPointsScreen(onOpenPoint: widget.onOpenCollectionPoint),
           ContentScreen(onOpenArticle: widget.onOpenArticle),
           MyAreaScreen(
+            isActive: _currentTab == ShellTab.eu,
+            onOpenProfile: widget.onOpenProfile,
             onOpenSchedule: () => _goToTab(ShellTab.doar),
             onOpenArticle: widget.onOpenArticle,
             onOpenDonation: widget.onOpenDonation,

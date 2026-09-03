@@ -6,5 +6,5 @@ class GetCurrentDonation {
   final DonationRepository _repository;
   const GetCurrentDonation(this._repository);
 
-  Future<Donation> call() => _repository.getCurrentDonation();
+  Future<Donation?> call() => _repository.getCurrentDonation();
 }

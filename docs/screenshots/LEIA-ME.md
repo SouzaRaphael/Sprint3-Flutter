@@ -18,6 +18,7 @@ Nomes esperados pelo `README.md` da raiz:
 | `09-minha-area.png` | Minha Área |
 | `10-depoimentos.png` | Depoimentos |
 | `11-detalhes.png` | Telas de detalhe |
+| `12-perfil.png` | Meu perfil (dados do cadastro) |
 
 Com o app rodando no emulador, o comando abaixo salva um print na pasta atual:
 

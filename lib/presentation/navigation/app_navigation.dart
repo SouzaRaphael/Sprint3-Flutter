@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:lactarehub/domain/entities/article.dart';
 import 'package:lactarehub/domain/entities/collection_point.dart';
 import 'package:lactarehub/domain/entities/donation.dart';
+import 'package:lactarehub/domain/entities/donor.dart';
 import 'package:lactarehub/presentation/screens/auth/login_screen.dart';
 import 'package:lactarehub/presentation/screens/content/article_detail_screen.dart';
 import 'package:lactarehub/presentation/screens/donation/donation_detail_screen.dart';
 import 'package:lactarehub/presentation/screens/landing/landing_screen.dart';
 import 'package:lactarehub/presentation/screens/points/collection_point_detail_screen.dart';
+import 'package:lactarehub/presentation/screens/profile/profile_screen.dart';
 import 'package:lactarehub/presentation/screens/registration/registration_screen.dart';
 import 'package:lactarehub/presentation/screens/registration/registration_success_screen.dart';
 import 'package:lactarehub/presentation/screens/shell/main_shell_screen.dart';
@@ -102,6 +104,13 @@ abstract class AppNavigation {
               AppRoutes.donationDetail,
               arguments: donation,
             ),
+            // Devolve `true` quando o perfil pediu para agendar uma coleta,
+            // para que a casca troque para a aba Doar.
+            onOpenProfile: (donor) => Navigator.pushNamed<bool>(
+              context,
+              AppRoutes.profile,
+              arguments: donor,
+            ),
           ),
         );
 
@@ -150,6 +159,22 @@ abstract class AppNavigation {
           (context) => DonationDetailScreen(
             donation: donation,
             goBack: () => Navigator.pop(context),
+          ),
+        );
+
+      case AppRoutes.profile:
+        final donor = settings.arguments as Donor;
+        return _route(
+          settings,
+          (context) => ProfileScreen(
+            donor: donor,
+            goBack: () => Navigator.pop(context),
+            onScheduleCollection: () => Navigator.pop(context, true),
+            onSignedOut: () => Navigator.pushNamedAndRemoveUntil(
+              context,
+              AppRoutes.landing,
+              (route) => false,
+            ),
           ),
         );
 

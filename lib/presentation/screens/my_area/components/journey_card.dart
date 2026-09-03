@@ -16,10 +16,15 @@ class JourneyCard extends StatelessWidget {
   });
 
   final Donor donor;
-  final CollectionSchedule schedule;
+
+  /// Nula quando ainda não há coleta marcada.
+  final CollectionSchedule? schedule;
 
   @override
   Widget build(BuildContext context) {
+    final daysSince = donor.daysSinceLastDonation;
+    final next = schedule;
+
     return Container(
       padding: const EdgeInsets.all(AppSpacing.xl),
       decoration: BoxDecoration(
@@ -60,16 +65,19 @@ class JourneyCard extends StatelessWidget {
               Expanded(
                 child: _InnerStat(
                   label: 'Última doação',
-                  value: Formatters.daysAgo(donor.daysSinceLastDonation),
+                  value: daysSince == null
+                      ? 'Nenhuma ainda'
+                      : Formatters.daysAgo(daysSince),
                 ),
               ),
               const SizedBox(width: AppSpacing.md),
               Expanded(
                 child: _InnerStat(
                   label: 'Próximo agendamento',
-                  value:
-                      '${Formatters.weekdayAndDate(schedule.scheduledAt)} · '
-                      '${schedule.scheduledAt.hour}h',
+                  value: next == null
+                      ? 'A marcar'
+                      : '${Formatters.weekdayAndDate(next.scheduledAt)} · '
+                            '${next.scheduledAt.hour}h',
                 ),
               ),
             ],

@@ -6,6 +6,7 @@ import 'package:lactarehub/core/theme/app_text_styles.dart';
 import 'package:lactarehub/domain/entities/collection_point.dart';
 import 'package:lactarehub/presentation/shared/components/app_feedback.dart';
 import 'package:lactarehub/presentation/shared/components/app_top_bar.dart';
+import 'package:lactarehub/presentation/shared/components/info_row.dart';
 import 'package:lactarehub/presentation/shared/components/primary_button.dart';
 import 'package:lactarehub/presentation/shared/components/secondary_button.dart';
 import 'package:lactarehub/presentation/shared/components/status_badge.dart';
@@ -78,24 +79,24 @@ class CollectionPointDetailScreen extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: AppSpacing.xl),
-                  _InfoRow(
+                  InfoRow(
                     icon: Icons.place_outlined,
                     label: 'Endereço',
                     value: point.address,
                   ),
-                  _InfoRow(
+                  InfoRow(
                     icon: Icons.schedule,
                     label: 'Funcionamento',
                     value: point.openingHours,
                   ),
-                  _InfoRow(
+                  InfoRow(
                     icon: Icons.near_me_outlined,
                     label: 'Distância',
                     value: point.type == CollectionPointType.coletaDomiciliar
                         ? 'Atendimento no seu endereço'
                         : '${point.distanceKm.toStringAsFixed(1)} km de você',
                   ),
-                  _InfoRow(
+                  InfoRow(
                     icon: Icons.call_outlined,
                     label: 'Telefone',
                     value: point.phone,
@@ -152,58 +153,6 @@ class CollectionPointDetailScreen extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-/// Linha de informação com ícone, rótulo e valor.
-class _InfoRow extends StatelessWidget {
-  const _InfoRow({
-    required this.icon,
-    required this.label,
-    required this.value,
-  });
-
-  final IconData icon;
-  final String label;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: AppSpacing.lg),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 38,
-            height: 38,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: AppColors.tintBlue,
-              borderRadius: BorderRadius.circular(11),
-            ),
-            child: Icon(icon, size: 19, color: AppColors.primary),
-          ),
-          const SizedBox(width: AppSpacing.md),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(label, style: AppTextStyles.caption),
-                const SizedBox(height: 3),
-                Text(
-                  value,
-                  style: AppTextStyles.bodySmall.copyWith(
-                    color: AppColors.ink,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }

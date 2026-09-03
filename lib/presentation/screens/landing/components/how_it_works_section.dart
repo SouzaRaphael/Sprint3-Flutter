@@ -48,27 +48,27 @@ class HowItWorksSection extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: AppSpacing.lg),
-                GestureDetector(
-                  // onTap: onOpenGuide,
-                  onTap: () => (),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        'Ver guia completo',
-                        style: AppTextStyles.label.copyWith(
-                          color: AppColors.primary,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      const Icon(
-                        Icons.arrow_forward,
-                        size: 16,
-                        color: AppColors.primary,
-                      ),
-                    ],
-                  ),
-                ),
+                // GestureDetector(
+                //   // onTap: onOpenGuide,
+                //   onTap: () => (),
+                //   child: Row(
+                //     mainAxisSize: MainAxisSize.min,
+                //     children: [
+                //       Text(
+                //         'Ver guia completo',
+                //         style: AppTextStyles.label.copyWith(
+                //           color: AppColors.primary,
+                //         ),
+                //       ),
+                //       const SizedBox(width: 8),
+                //       const Icon(
+                //         Icons.arrow_forward,
+                //         size: 16,
+                //         color: AppColors.primary,
+                //       ),
+                //     ],
+                //   ),
+                // ),
               ],
             ),
           ),
